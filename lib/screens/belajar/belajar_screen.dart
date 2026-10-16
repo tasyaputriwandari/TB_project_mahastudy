@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../data/mock_data.dart';
 import '../../models/study_plan_item.dart';
+import '../../models/study_plan_model.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/study_session_card.dart';
+import 'add_study_plan_screen.dart';
 import 'sesi_belajar_timer_screen.dart';
 
 class BelajarScreen extends StatefulWidget {
@@ -191,7 +193,7 @@ class _BelajarScreenState extends State<BelajarScreen> {
               padding: const EdgeInsets.all(20),
               child: PrimaryButton(
                 text: '+ Tambah Rencana Belajar',
-                onPressed: _showAddPlanDialog,
+                onPressed: _navigateToAddStudyPlan,
               ),
             ),
           ],
@@ -200,80 +202,41 @@ class _BelajarScreenState extends State<BelajarScreen> {
     );
   }
 
-  void _showAddPlanDialog() {
-    final topicController = TextEditingController();
-    final durationController = TextEditingController(text: '45');
-    String selectedCourse = 'Pemrograman Web';
+  Future<void> _navigateToAddStudyPlan() async {
+    final result = await Navigator.push<StudyPlan>(
+      context,
+      MaterialPageRoute(builder: (_) => const AddStudyPlanScreen()),
+    );
+    if (!mounted || result == null) return;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    final code = result.course.length > 2
+        ? result.course.substring(0, 2).toUpperCase()
+        : result.course;
+    final dur = (result.endTime.hour * 60 + result.endTime.minute) -
+        (result.startTime.hour * 60 + result.startTime.minute);
+    final durationMinutes = dur > 0 ? dur : 45;
+
+    _mockData.addStudyPlan(
+      StudyPlanItem(
+        id: 'sp_${DateTime.now().millisecondsSinceEpoch}',
+        courseCode: code,
+        courseName: result.course,
+        topic: result.target,
+        scheduledTime: '${StudyPlan.formatDate(result.date)}, ${result.formattedTime}',
+        durationMinutes: durationMinutes,
       ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Tambah Rencana Belajar',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              initialValue: selectedCourse,
-              decoration: const InputDecoration(labelText: 'Mata Kuliah'),
-              items: _mockData.courses.map((c) {
-                return DropdownMenuItem(value: c.name, child: Text(c.name));
-              }).toList(),
-              onChanged: (val) {
-                if (val != null) selectedCourse = val;
-              },
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: topicController,
-              decoration: const InputDecoration(labelText: 'Target Topik Belajar (cth: Latihan Soal)'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: durationController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Durasi (menit)'),
-            ),
-            const SizedBox(height: 20),
-            PrimaryButton(
-              text: 'Simpan Rencana',
-              onPressed: () {
-                if (topicController.text.isNotEmpty) {
-                  final code = selectedCourse.length > 2
-                      ? selectedCourse.substring(0, 2).toUpperCase()
-                      : selectedCourse;
-                  final dur = int.tryParse(durationController.text) ?? 45;
+    );
 
-                  _mockData.addStudyPlan(
-                    StudyPlanItem(
-                      id: 'sp_${DateTime.now().millisecondsSinceEpoch}',
-                      courseCode: code,
-                      courseName: selectedCourse,
-                      topic: topicController.text,
-                      scheduledTime: 'Hari ini, 20:00',
-                      durationMinutes: dur,
-                    ),
-                  );
-                  Navigator.pop(ctx);
-                }
-              },
-            ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Text('Rencana belajar berhasil dibuat'),
           ],
         ),
+        backgroundColor: Color(0xFF24714E),
       ),
     );
   }
