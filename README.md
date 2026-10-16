@@ -1,17 +1,25 @@
-# mahastudy
+# Mahastudy
 
-A new Flutter project.
+**Mahastudy** adalah aplikasi Flutter untuk membantu mahasiswa mengatur kegiatan akademik dalam satu tempat. Aplikasi ini menyediakan fitur untuk melihat jadwal, mengelola tugas kuliah, dan merencanakan sesi belajar.
 
-## Getting Started
+## Fitur
 
-This project is a starting point for a Flutter application.
+- Dashboard ringkasan aktivitas akademik
+- Pengelolaan jadwal kuliah dan kegiatan kampus
+- Daftar dan pengelolaan tugas kuliah
+- Rencana belajar dengan jadwal dan target
+- Timer fokus untuk mendukung sesi belajar
+- Navigasi antarfitur melalui menu utama
 
-A few resources to get you started if this is your first Flutter project:
+## Teknologi
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter
+- Dart
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Menjalankan Aplikasi
+
+Pastikan Flutter sudah terpasang, lalu jalankan perintah berikut dari folder project:
+
+```bash
+flutter pub get
+flutter run -d chrome
