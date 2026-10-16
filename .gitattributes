@@ -1,0 +1,6 @@
+# Mark platform-specific boilerplate as vendored so GitHub recognizes Dart as the primary language
+windows/** linguist-vendored
+linux/** linguist-vendored
+macos/** linguist-vendored
+android/** linguist-vendored
+ios/** linguist-vendored
