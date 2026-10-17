@@ -128,28 +128,6 @@ class _SearchableMajorDropdownState extends State<SearchableMajorDropdown> {
     _focusNode.requestFocus();
   }
 
-  Color _getCategoryColor(String category) {
-    if (category.contains('Teknologi') || category.contains('Komputer')) {
-      return const Color(0xFF2563EB);
-    } else if (category.contains('Teknik') || category.contains('Rekayasa')) {
-      return const Color(0xFF475569);
-    } else if (category.contains('Kesehatan') || category.contains('Kedokteran')) {
-      return const Color(0xFF059669);
-    } else if (category.contains('Ekonomi') || category.contains('Bisnis')) {
-      return const Color(0xFFD97706);
-    } else if (category.contains('Hukum') || category.contains('Sosial')) {
-      return const Color(0xFF7C3AED);
-    } else if (category.contains('Sains') || category.contains('Matematika')) {
-      return const Color(0xFF0891B2);
-    } else if (category.contains('Pendidikan')) {
-      return const Color(0xFFE11D48);
-    } else if (category.contains('Seni') || category.contains('Desain')) {
-      return const Color(0xFF9333EA);
-    } else if (category.contains('Pertanian') || category.contains('Kelautan')) {
-      return const Color(0xFF16A34A);
-    }
-    return AppTheme.textSecondary;
-  }
 
   Widget _buildHighlightedText(String text, String query) {
     final cleanQuery = query.trim().toLowerCase();
@@ -339,58 +317,16 @@ class _SearchableMajorDropdownState extends State<SearchableMajorDropdown> {
 
                                 final item = _filteredMajors[index];
                                 final isSelected = item.name.toLowerCase() == _selectedMajor.toLowerCase();
-                                final categoryColor = _getCategoryColor(item.category);
 
                                 return InkWell(
                                   onTap: () => _selectMajor(item.name),
                                   child: Container(
                                     color: isSelected ? const Color(0xFFE2E8F0).withValues(alpha: 0.5) : Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              _buildHighlightedText(item.name, query),
-                                              const SizedBox(height: 3),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                                    decoration: BoxDecoration(
-                                                      color: categoryColor.withValues(alpha: 0.08),
-                                                      borderRadius: BorderRadius.circular(4),
-                                                    ),
-                                                    child: Text(
-                                                      item.category,
-                                                      style: TextStyle(
-                                                        fontSize: 10.5,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: categoryColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  if (query.isNotEmpty &&
-                                                      !item.name.toLowerCase().contains(query.toLowerCase()) &&
-                                                      item.aliases.any((a) => a.toLowerCase().contains(query.toLowerCase()))) ...[
-                                                    const SizedBox(width: 6),
-                                                    Flexible(
-                                                      child: Text(
-                                                        '• alias: ${item.aliases.firstWhere((a) => a.toLowerCase().contains(query.toLowerCase()))}',
-                                                        style: const TextStyle(
-                                                          fontSize: 10.5,
-                                                          fontStyle: FontStyle.italic,
-                                                          color: AppTheme.textSecondary,
-                                                        ),
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                          child: _buildHighlightedText(item.name, query),
                                         ),
                                         if (isSelected)
                                           const Icon(
