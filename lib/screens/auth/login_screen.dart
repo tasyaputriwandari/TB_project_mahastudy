@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/mock_data.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _emailError;
   String? _passwordError;
   String? _authError;
+  bool _isNotRegistered = false;
   bool _isLoading = false;
 
   void _validateAndLogin() {
@@ -26,17 +28,18 @@ class _LoginScreenState extends State<LoginScreen> {
       _emailError = null;
       _passwordError = null;
       _authError = null;
+      _isNotRegistered = false;
     });
 
-    final email = _emailController.text.trim();
+    final identifier = _emailController.text.trim();
     final password = _passwordController.text;
 
     bool hasError = false;
 
-    if (email.isEmpty) {
-      _emailError = 'Email wajib diisi';
+    if (identifier.isEmpty) {
+      _emailError = 'Email atau nama wajib diisi';
       hasError = true;
-    } else if (!email.contains('@') || !email.contains('.')) {
+    } else if (identifier.contains('@') && !identifier.contains('.')) {
       _emailError = 'Format email tidak valid';
       hasError = true;
     }
@@ -54,13 +57,53 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Check credentials simulation
+    // Check credentials against registered accounts
     setState(() => _isLoading = true);
-    Future.delayed(const Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       if (!mounted) return;
       setState(() => _isLoading = false);
 
+      final account = MockData().findAccount(identifier);
+
+      // If user/account is not registered, show error and direct to register
+      if (account == null) {
+        setState(() {
+          _isNotRegistered = true;
+          _emailError = 'Akun belum terdaftar';
+          _authError = 'Nama atau email "$identifier" belum terdaftar. Silakan buat akun terlebih dahulu.';
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Akun "$identifier" belum terdaftar.'),
+            backgroundColor: AppTheme.danger,
+            action: SnackBarAction(
+              label: 'Buat Akun',
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                );
+              },
+            ),
+          ),
+        );
+        return;
+      }
+
+      // Check if password matches
+      if (account.password != password) {
+        setState(() {
+          _isNotRegistered = false;
+          _passwordError = 'Password salah';
+          _authError = 'Password yang Anda masukkan salah. Silakan coba lagi.';
+        });
+        return;
+      }
+
       // Successfully authenticated
+      MockData().currentUser = account.user;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
@@ -136,13 +179,19 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 32),
               // Form Fields
               CustomTextField(
-                label: 'Email',
-                hint: 'nama@email.com',
+                label: 'Email atau Nama',
+                hint: 'nama@email.com atau nama lengkap',
                 controller: _emailController,
                 errorText: _emailError,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (_) {
-                  if (_emailError != null) setState(() => _emailError = null);
+                  if (_emailError != null || _authError != null || _isNotRegistered) {
+                    setState(() {
+                      _emailError = null;
+                      _authError = null;
+                      _isNotRegistered = false;
+                    });
+                  }
                 },
               ),
               const SizedBox(height: 16),
@@ -165,10 +214,82 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 onChanged: (_) {
-                  if (_passwordError != null) setState(() => _passwordError = null);
+                  if (_passwordError != null || _authError != null) {
+                    setState(() {
+                      _passwordError = null;
+                      _authError = null;
+                    });
+                  }
                 },
               ),
-              if (_authError != null) ...[
+              if (_isNotRegistered) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF2F2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppTheme.danger.withValues(alpha: 0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.error_outline_rounded, color: AppTheme.danger, size: 20),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Akun Belum Terdaftar',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.danger,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _authError ?? 'Akun ini belum terdaftar. Silakan buat akun terlebih dahulu.',
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          color: Color(0xFF991B1B),
+                          height: 1.35,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                            );
+                          },
+                          icon: const Icon(Icons.person_add_alt_1_rounded, size: 16),
+                          label: const Text('Buat Akun Terlebih Dahulu'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.danger,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else if (_authError != null) ...[
                 const SizedBox(height: 12),
                 Text(
                   _authError!,

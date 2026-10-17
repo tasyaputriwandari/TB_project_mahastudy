@@ -89,13 +89,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!mounted) return;
       setState(() => _isLoading = false);
 
-      // Save user profile info
-      MockData().currentUser = UserModel(
-        id: 'u1',
+      // Save and register user profile info
+      final newUser = UserModel(
+        id: 'u_${DateTime.now().millisecondsSinceEpoch}',
         name: name,
         email: email,
         major: major,
       );
+      MockData().registerUser(newUser, password);
 
       // Navigate to Home with success toast banner
       Navigator.pushAndRemoveUntil(

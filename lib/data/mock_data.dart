@@ -5,10 +5,61 @@ import '../models/task_item.dart';
 import '../models/study_plan_item.dart';
 import '../models/user_model.dart';
 
+class MockUserAccount {
+  final UserModel user;
+  final String password;
+
+  const MockUserAccount({
+    required this.user,
+    required this.password,
+  });
+}
+
 class MockData extends ChangeNotifier {
   static final MockData _instance = MockData._internal();
   factory MockData() => _instance;
   MockData._internal();
+
+  final List<MockUserAccount> _registeredUsers = [
+    const MockUserAccount(
+      user: UserModel(
+        id: 'u1',
+        name: 'Nadia',
+        email: 'nadia@mahasiswa.ac.id',
+        major: 'Informatika',
+      ),
+      password: 'password123',
+    ),
+  ];
+
+  List<MockUserAccount> get registeredUsers => List.unmodifiable(_registeredUsers);
+
+  MockUserAccount? findAccount(String identifier) {
+    final clean = identifier.trim().toLowerCase();
+    if (clean.isEmpty) return null;
+    try {
+      return _registeredUsers.firstWhere(
+        (acc) =>
+            acc.user.email.toLowerCase() == clean ||
+            acc.user.name.toLowerCase() == clean,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool isAccountRegistered(String identifier) {
+    return findAccount(identifier) != null;
+  }
+
+  void registerUser(UserModel user, String password) {
+    _registeredUsers.removeWhere((acc) =>
+        acc.user.email.toLowerCase() == user.email.toLowerCase() ||
+        acc.user.name.toLowerCase() == user.name.toLowerCase());
+    _registeredUsers.add(MockUserAccount(user: user, password: password));
+    currentUser = user;
+    notifyListeners();
+  }
 
   UserModel currentUser = const UserModel(
     id: 'u1',
