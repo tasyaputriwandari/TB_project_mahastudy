@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../data/mock_data.dart';
+import '../../models/user_model.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../../widgets/searchable_major_dropdown.dart';
 import '../main_navigation_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -18,18 +21,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController(text: 'password123');
   
   String? _selectedMajor = 'Informatika';
-  final List<String> _majors = [
-    'Informatika',
-    'Sistem Informasi',
-    'Teknologi Informasi',
-    'Teknik Komputer',
-    'Sains Data',
-  ];
 
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   String? _nameError;
   String? _emailError;
+  String? _majorError;
   String? _passwordError;
   String? _confirmPasswordError;
   bool _isLoading = false;
@@ -38,12 +35,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _nameError = null;
       _emailError = null;
+      _majorError = null;
       _passwordError = null;
       _confirmPasswordError = null;
     });
 
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
+    final major = _selectedMajor?.trim() ?? '';
     final password = _passwordController.text;
     final confirm = _confirmPasswordController.text;
 
@@ -59,6 +58,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       hasError = true;
     } else if (!email.contains('@')) {
       _emailError = 'Format email tidak valid';
+      hasError = true;
+    }
+
+    if (major.isEmpty) {
+      _majorError = 'Program studi wajib dipilih';
       hasError = true;
     }
 
@@ -84,6 +88,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Future.delayed(const Duration(milliseconds: 600), () {
       if (!mounted) return;
       setState(() => _isLoading = false);
+
+      // Save user profile info
+      MockData().currentUser = UserModel(
+        id: 'u1',
+        name: name,
+        email: email,
+        major: major,
+      );
 
       // Navigate to Home with success toast banner
       Navigator.pushAndRemoveUntil(
@@ -176,41 +188,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 14),
-              // Major dropdown
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Program studi',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: AppTheme.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedMajor,
-                    icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.textSecondary),
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.cardBorder, width: 1.2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.primary, width: 1.5),
-                      ),
-                    ),
-                    items: _majors.map((m) {
-                      return DropdownMenuItem(value: m, child: Text(m, style: const TextStyle(fontSize: 14)));
-                    }).toList(),
-                    onChanged: (val) => setState(() => _selectedMajor = val),
-                  ),
-                ],
+              // Major dropdown with predictive autocomplete
+              SearchableMajorDropdown(
+                initialValue: _selectedMajor,
+                errorText: _majorError,
+                onSelected: (val) {
+                  setState(() {
+                    _selectedMajor = val;
+                    if (val.trim().isNotEmpty) {
+                      _majorError = null;
+                    }
+                  });
+                },
               ),
               const SizedBox(height: 14),
               CustomTextField(
