@@ -10,6 +10,12 @@ class ScheduleItem {
   final String locationDetail;
   final ScheduleType type;
   final bool isNew;
+  final DateTime? date;
+  final String? dateFormatted;
+  final String? lecturer;
+  final String? notes;
+  final String? organizer;
+  final String? examType;
 
   const ScheduleItem({
     required this.id,
@@ -21,6 +27,12 @@ class ScheduleItem {
     this.locationDetail = 'Lantai 1, Sayap Barat',
     this.type = ScheduleType.kuliah,
     this.isNew = false,
+    this.date,
+    this.dateFormatted,
+    this.lecturer,
+    this.notes,
+    this.organizer,
+    this.examType,
   });
 
   ScheduleItem copyWith({
@@ -33,6 +45,12 @@ class ScheduleItem {
     String? locationDetail,
     ScheduleType? type,
     bool? isNew,
+    DateTime? date,
+    String? dateFormatted,
+    String? lecturer,
+    String? notes,
+    String? organizer,
+    String? examType,
   }) {
     return ScheduleItem(
       id: id ?? this.id,
@@ -44,6 +62,12 @@ class ScheduleItem {
       locationDetail: locationDetail ?? this.locationDetail,
       type: type ?? this.type,
       isNew: isNew ?? this.isNew,
+      date: date ?? this.date,
+      dateFormatted: dateFormatted ?? this.dateFormatted,
+      lecturer: lecturer ?? this.lecturer,
+      notes: notes ?? this.notes,
+      organizer: organizer ?? this.organizer,
+      examType: examType ?? this.examType,
     );
   }
 }
