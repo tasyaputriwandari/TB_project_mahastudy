@@ -227,122 +227,189 @@ class _JadwalScreenState extends State<JadwalScreen> {
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Course code avatar
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryLight,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              code,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primary,
-              ),
-            ),
-          ),
-          const SizedBox(width: 14),
-          // Info column
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.title,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Course code avatar
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  code,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.primary,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Row(
+              ),
+              const SizedBox(width: 14),
+              // Info column
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.access_time, size: 13, color: AppTheme.textSecondary),
-                    const SizedBox(width: 4),
                     Text(
-                      item.time,
-                      style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                      item.title,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time, size: 13, color: AppTheme.textSecondary),
+                        const SizedBox(width: 4),
+                        Text(
+                          item.time,
+                          style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(Icons.room_outlined, size: 13, color: AppTheme.textSecondary),
+                        const SizedBox(width: 4),
+                        Text(
+                          item.room,
+                          style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    const Icon(Icons.room_outlined, size: 13, color: AppTheme.textSecondary),
-                    const SizedBox(width: 4),
-                    Text(
-                      item.room,
-                      style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+              ),
+              if (item.isNew)
+                Container(
+                  margin: const EdgeInsets.only(left: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: const Text(
+                    'Baru',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
+                  ),
                 ),
-              ],
-            ),
+            ],
           ),
-          if (item.isNew)
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: AppTheme.primary,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: const Text(
-                'Baru',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          // Button: + Peta Ruang
-          OutlinedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ModalPetaLokasi(
-                    courseName: item.title,
-                    roomName: item.room,
-                    locationDetail: item.locationDetail,
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Button: Edit
+              OutlinedButton.icon(
+                onPressed: () => _editSchedule(item),
+                icon: const Icon(Icons.edit_outlined, size: 14),
+                label: const Text('Edit', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.primary,
+                  side: const BorderSide(color: AppTheme.primary),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-              );
-            },
-            icon: const Icon(Icons.location_on_outlined, size: 14),
-            label: const Text('Peta Ruang', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppTheme.primary,
-              side: const BorderSide(color: AppTheme.primary),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
               ),
-            ),
+              const SizedBox(width: 8),
+              // Button: Peta Ruang
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ModalPetaLokasi(
+                        courseName: item.title,
+                        roomName: item.room,
+                        locationDetail: item.locationDetail,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.location_on_outlined, size: 14),
+                label: const Text('Peta Ruang', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.primary,
+                  side: const BorderSide(color: AppTheme.primary),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
+  Future<void> _editSchedule(ScheduleItem item) async {
+    final result = await Navigator.push<dynamic>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddScheduleScreen(
+          scheduleToEdit: item,
+          existingSchedules: _mockData.schedules,
+        ),
+      ),
+    );
+
+    if (!mounted || result == null) return;
+
+    if (result is Map && result['deleted'] == true) {
+      setState(() {
+        _mockData.schedules.removeWhere((s) => s.id == item.id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('🗑️ Jadwal ${item.title} berhasil dihapus'),
+          backgroundColor: AppTheme.danger,
+        ),
+      );
+    } else if (result is ScheduleItem) {
+      setState(() {
+        final index = _mockData.schedules.indexWhere((s) => s.id == result.id);
+        if (index != -1) {
+          _mockData.schedules[index] = result;
+        }
+        _selectedDay = result.day;
+        _selectedType = result.type;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ Jadwal ${result.title} berhasil diperbarui!'),
+          backgroundColor: AppTheme.success,
+        ),
+      );
+    }
+  }
+
   Future<void> _showAddScheduleDialog() async {
-    final result = await Navigator.push<ScheduleItem>(
+    final result = await Navigator.push<dynamic>(
       context,
       MaterialPageRoute(
         builder: (_) => AddScheduleScreen(existingSchedules: _mockData.schedules),
       ),
     );
 
-    if (result != null && mounted) {
+    if (result != null && result is ScheduleItem && mounted) {
       setState(() {
         _mockData.schedules.add(result);
         _selectedDay = result.day;
