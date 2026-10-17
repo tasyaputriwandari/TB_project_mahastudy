@@ -246,54 +246,7 @@ class _SearchableMajorDropdownState extends State<SearchableMajorDropdown> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Header / Status
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF8FAFC),
-                        border: Border(
-                          bottom: BorderSide(color: AppTheme.cardBorder, width: 0.8),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            query.isEmpty ? Icons.star_outline_rounded : Icons.search_rounded,
-                            size: 15,
-                            color: AppTheme.textSecondary,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              query.isEmpty
-                                  ? 'Jurusan Populer di Indonesia'
-                                  : 'Prediksi: ${_filteredMajors.length} jurusan ditemukan',
-                              style: const TextStyle(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.textSecondary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          if (query.isNotEmpty)
-                            Text(
-                              'Ketik untuk filter',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: AppTheme.textMuted.withValues(alpha: 0.8),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-
-                    // Prediction list
-                    Flexible(
-                      child: _filteredMajors.isEmpty
+                child: _filteredMajors.isEmpty
                           ? Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                               child: Column(
@@ -451,9 +404,6 @@ class _SearchableMajorDropdownState extends State<SearchableMajorDropdown> {
                                 );
                               },
                             ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),

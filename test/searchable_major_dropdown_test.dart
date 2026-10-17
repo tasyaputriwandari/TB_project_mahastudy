@@ -6,7 +6,7 @@ import 'package:mahastudy/widgets/searchable_major_dropdown.dart';
 
 void main() {
   group('IndonesiaMajors search logic tests', () {
-    test('Empty query returns popular majors', () {
+    test('Empty query returns all majors', () {
       final results = IndonesiaMajors.search('');
       expect(results.isNotEmpty, true);
       expect(results.any((m) => m.name == 'Teknik Informatika'), true);

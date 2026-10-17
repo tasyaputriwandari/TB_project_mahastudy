@@ -834,7 +834,9 @@ class IndonesiaMajors {
   static List<MajorItem> search(String query, {int limit = 30}) {
     final cleanQuery = query.trim().toLowerCase();
     if (cleanQuery.isEmpty) {
-      return popularMajors;
+      final list = List<MajorItem>.from(allMajors);
+      list.sort((a, b) => a.name.compareTo(b.name));
+      return list;
     }
 
     final scored = <MapEntry<MajorItem, int>>[];
