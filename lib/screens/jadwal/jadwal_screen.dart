@@ -4,6 +4,7 @@ import '../../models/schedule_item.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import 'modal_peta_lokasi.dart';
+import 'add_schedule_screen.dart';
 
 class JadwalScreen extends StatefulWidget {
   const JadwalScreen({super.key});
@@ -286,6 +287,23 @@ class _JadwalScreenState extends State<JadwalScreen> {
               ],
             ),
           ),
+          if (item.isNew)
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppTheme.primary,
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: const Text(
+                'Baru',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           // Button: + Peta Ruang
           OutlinedButton.icon(
             onPressed: () {
@@ -316,71 +334,26 @@ class _JadwalScreenState extends State<JadwalScreen> {
     );
   }
 
-  void _showAddScheduleDialog() {
-    final titleController = TextEditingController();
-    final roomController = TextEditingController();
-    final timeController = TextEditingController(text: '10:00 - 11:40');
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Tambah Jadwal Perkuliahan',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: 'Mata Kuliah / Kegiatan'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: roomController,
-              decoration: const InputDecoration(labelText: 'Ruang / Lokasi (cth: Ruang A.201)'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: timeController,
-              decoration: const InputDecoration(labelText: 'Jam (cth: 10:00 - 11:40)'),
-            ),
-            const SizedBox(height: 20),
-            PrimaryButton(
-              text: 'Simpan Jadwal',
-              onPressed: () {
-                if (titleController.text.isNotEmpty) {
-                  _mockData.schedules.add(
-                    ScheduleItem(
-                      id: 's_${DateTime.now().millisecondsSinceEpoch}',
-                      title: titleController.text,
-                      subtitle: 'Kuliah • ${roomController.text}',
-                      time: timeController.text,
-                      day: _selectedDay,
-                      room: roomController.text.isEmpty ? 'Ruang A.101' : roomController.text,
-                      type: _selectedType,
-                    ),
-                  );
-                  Navigator.pop(ctx);
-                  setState(() {});
-                }
-              },
-            ),
-          ],
-        ),
+  Future<void> _showAddScheduleDialog() async {
+    final result = await Navigator.push<ScheduleItem>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddScheduleScreen(existingSchedules: _mockData.schedules),
       ),
     );
+
+    if (result != null && mounted) {
+      setState(() {
+        _mockData.schedules.add(result);
+        _selectedDay = result.day;
+        _selectedType = result.type;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('🎉 Jadwal ${result.title} berhasil ditambahkan!'),
+          backgroundColor: AppTheme.success,
+        ),
+      );
+    }
   }
 }
