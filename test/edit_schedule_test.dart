@@ -176,3 +176,4 @@ void main() {
     expect(find.text('Statistika'), findsNothing);
   });
 }
+

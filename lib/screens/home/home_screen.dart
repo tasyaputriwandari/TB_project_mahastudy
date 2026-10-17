@@ -6,6 +6,9 @@ import '../../widgets/deadline_risk_banner.dart';
 import '../../widgets/quick_action_card.dart';
 import '../../widgets/stat_badge.dart';
 import '../tugas/detail_tugas_screen.dart';
+import '../jadwal/detail_jadwal_screen.dart';
+import '../jadwal/smart_agenda_screen.dart';
+import '../notifikasi/notifikasi_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(int) onNavigateTab;
@@ -89,17 +92,53 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: const Icon(Icons.swap_horiz, size: 20, color: AppTheme.textMuted),
                         onPressed: () => _mockData.toggleEmptyState(),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppTheme.cardBorder),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_none_rounded,
-                          size: 20,
-                          color: AppTheme.textPrimary,
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const NotifikasiScreen(),
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(20),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppTheme.cardBorder),
+                              ),
+                              child: const Icon(
+                                Icons.notifications_none_rounded,
+                                size: 20,
+                                color: AppTheme.textPrimary,
+                              ),
+                            ),
+                            if (_mockData.unreadNotificationCount > 0)
+                              Positioned(
+                                top: -2,
+                                right: -2,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFDC2626),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    '${_mockData.unreadNotificationCount}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ],
@@ -145,7 +184,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   InkWell(
-                    onTap: () => widget.onNavigateTab(1),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SmartAgendaScreen(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Lihat semua',
                       style: TextStyle(
@@ -172,7 +218,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: 'Statistika',
                       subtitle: 'Kuliah • Ruang A.102',
                       icon: Icons.school_outlined,
-                      onTap: () => widget.onNavigateTab(1),
+                      onTap: () {
+                        final schedule = _mockData.schedules.firstWhere(
+                          (s) => s.id == 's1',
+                          orElse: () => _mockData.schedules.first,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailJadwalScreen(schedule: schedule),
+                          ),
+                        );
+                      },
                     ),
                     const Divider(height: 12, color: AppTheme.cardBorder),
                     AgendaTimelineCard(
@@ -180,7 +237,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: 'Review presentasi',
                       subtitle: 'Tugas • Interaksi Manusia Komputer',
                       icon: Icons.assignment_outlined,
-                      onTap: () => widget.onNavigateTab(2),
+                      onTap: () {
+                        final task = _mockData.tasks.firstWhere(
+                          (t) => t.id == 't2',
+                          orElse: () => _mockData.tasks.first,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailTugasScreen(task: task),
+                          ),
+                        );
+                      },
                     ),
                     const Divider(height: 12, color: AppTheme.cardBorder),
                     AgendaTimelineCard(
@@ -188,7 +256,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: 'Rapat BEM',
                       subtitle: 'Kegiatan • Sekretariat BEM',
                       icon: Icons.groups_outlined,
-                      onTap: () => widget.onNavigateTab(1),
+                      onTap: () {
+                        final schedule = _mockData.schedules.firstWhere(
+                          (s) => s.id == 's6',
+                          orElse: () => _mockData.schedules.first,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailJadwalScreen(schedule: schedule),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
