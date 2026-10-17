@@ -23,7 +23,18 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isNotRegistered = false;
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+      }
+    });
+  }
+
   void _validateAndLogin() {
+    ScaffoldMessenger.of(context).clearSnackBars();
     setState(() {
       _emailError = null;
       _passwordError = null;
@@ -97,6 +108,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
