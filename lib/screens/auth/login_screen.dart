@@ -73,22 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
           _authError = 'Nama atau email "$identifier" belum terdaftar. Silakan buat akun terlebih dahulu.';
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Akun "$identifier" belum terdaftar.'),
-            backgroundColor: AppTheme.danger,
-            action: SnackBarAction(
-              label: 'Buat Akun',
-              textColor: Colors.white,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                );
-              },
-            ),
-          ),
-        );
         return;
       }
 
