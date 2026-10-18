@@ -21,10 +21,10 @@ class AddScheduleScreen extends StatefulWidget {
 
 class _AddScheduleScreenState extends State<AddScheduleScreen> {
   final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _courseController;
   late final TextEditingController _roomController;
   late final TextEditingController _mapsLinkController;
 
-  String? _selectedCourse = 'Pemrograman Web';
   String _selectedDay = 'Senin';
   ScheduleType _selectedType = ScheduleType.kuliah;
   TimeOfDay _startTime = const TimeOfDay(hour: 13, minute: 0);
@@ -47,7 +47,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     super.initState();
     if (widget.scheduleToEdit != null) {
       final s = widget.scheduleToEdit!;
-      _selectedCourse = s.title;
+      _courseController = TextEditingController(text: s.title);
       _selectedDay = s.day;
       _selectedType = s.type;
       _roomController = TextEditingController(text: s.room);
@@ -78,6 +78,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
         }
       }
     } else {
+      _courseController = TextEditingController();
       _roomController = TextEditingController(text: 'Lab Komputer 2');
       _mapsLinkController = TextEditingController(text: 'maps.app.goo.gl/kampusA');
     }
@@ -86,6 +87,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
 
   @override
   void dispose() {
+    _courseController.dispose();
     _roomController.dispose();
     _mapsLinkController.dispose();
     super.dispose();
@@ -157,7 +159,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
   }
 
   bool get _canSave {
-    final hasCourse = _selectedCourse != null && _selectedCourse!.isNotEmpty;
+    final hasCourse = _courseController.text.trim().isNotEmpty;
     final hasRoom = _roomController.text.trim().isNotEmpty;
     final noConflict = _conflictMessage == null;
     return hasCourse && hasRoom && _isLocationFilled && noConflict;
@@ -171,10 +173,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
         ? 'Titik Peta: Kampus Utama'
         : _mapsLinkController.text.trim();
 
+    final courseName = _courseController.text.trim();
     final isEdit = widget.isEditing;
     final savedSchedule = isEdit
         ? widget.scheduleToEdit!.copyWith(
-            title: _selectedCourse!,
+            title: courseName,
             subtitle: '${_selectedType == ScheduleType.kuliah ? "Kuliah" : "Kegiatan"} • ${_roomController.text.trim()}',
             time: formattedTime,
             day: _selectedDay,
@@ -184,7 +187,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
           )
         : ScheduleItem(
             id: 's_${DateTime.now().millisecondsSinceEpoch}',
-            title: _selectedCourse!,
+            title: courseName,
             subtitle: '${_selectedType == ScheduleType.kuliah ? "Kuliah" : "Kegiatan"} • ${_roomController.text.trim()}',
             time: formattedTime,
             day: _selectedDay,
@@ -274,7 +277,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
             ),
           ),
           content: Text(
-            'Apakah Anda yakin ingin menghapus jadwal "${_selectedCourse ?? widget.scheduleToEdit?.title}"?',
+            'Apakah Anda yakin ingin menghapus jadwal "${_courseController.text.trim().isNotEmpty ? _courseController.text.trim() : (widget.scheduleToEdit?.title ?? '')}"?',
             style: const TextStyle(
               fontFamily: 'Inter',
               fontSize: 14,
@@ -319,10 +322,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final availableCourses = MockData().courses.map((c) => c.name).toList();
-    if (_selectedCourse != null && !availableCourses.contains(_selectedCourse)) {
-      availableCourses.add(_selectedCourse!);
-    }
 
     return Scaffold(
       backgroundColor: AppTheme.surface,
@@ -421,18 +420,14 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textPrimary),
                       ),
                       const SizedBox(height: 6),
-                      DropdownButtonFormField<String>(
-                        initialValue: _selectedCourse,
-                        isExpanded: true,
-                        decoration: _buildInputDecoration(hintText: 'Pilih mata kuliah'),
-                        icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.textSecondary),
-                        items: availableCourses
-                            .map((c) => DropdownMenuItem(value: c, child: Text(c, style: const TextStyle(fontSize: 14))))
-                            .toList(),
-                        onChanged: (val) {
-                          setState(() => _selectedCourse = val);
-                          _checkConflict();
-                        },
+                      TextFormField(
+                        controller: _courseController,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: _buildInputDecoration(
+                          hintText: 'Contoh: Pemrograman Web',
+                          suffixIcon: const Icon(Icons.menu_book_outlined, size: 20, color: AppTheme.textSecondary),
+                        ),
+                        onChanged: (_) => setState(() {}),
                       ),
 
                       const SizedBox(height: 14),

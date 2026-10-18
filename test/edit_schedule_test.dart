@@ -4,6 +4,7 @@ import 'package:mahastudy/data/mock_data.dart';
 import 'package:mahastudy/models/schedule_item.dart';
 import 'package:mahastudy/screens/jadwal/jadwal_screen.dart';
 import 'package:mahastudy/screens/jadwal/edit_schedule_screen.dart';
+import 'package:mahastudy/screens/jadwal/add_schedule_screen.dart';
 
 void main() {
   setUp(() {
@@ -174,6 +175,28 @@ void main() {
 
     // Statistika is now deleted
     expect(find.text('Statistika'), findsNothing);
+  });
+
+  testWidgets('AddScheduleScreen renders Mata Kuliah as a typed TextFormField instead of dropdown', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: AddScheduleScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Verify Title
+    expect(find.text('Tambah Jadwal Kuliah'), findsOneWidget);
+
+    // Verify Mata Kuliah field is a TextFormField with hint
+    expect(find.text('Mata Kuliah *'), findsOneWidget);
+    final courseField = find.widgetWithText(TextFormField, 'Contoh: Pemrograman Web');
+    expect(courseField, findsOneWidget);
+
+    // User can type custom course name
+    await tester.enterText(courseField, 'Kecerdasan Buatan');
+    await tester.pumpAndSettle();
+    expect(find.text('Kecerdasan Buatan'), findsOneWidget);
   });
 }
 
