@@ -21,9 +21,9 @@ class AddScheduleScreen extends StatefulWidget {
 
 class _AddScheduleScreenState extends State<AddScheduleScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _courseController;
-  late final TextEditingController _roomController;
-  late final TextEditingController _mapsLinkController;
+  final TextEditingController _courseController = TextEditingController();
+  final TextEditingController _roomController = TextEditingController(text: 'Lab Komputer 2');
+  final TextEditingController _mapsLinkController = TextEditingController(text: 'maps.app.goo.gl/kampusA');
 
   String _selectedDay = 'Senin';
   ScheduleType _selectedType = ScheduleType.kuliah;
@@ -47,17 +47,17 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     super.initState();
     if (widget.scheduleToEdit != null) {
       final s = widget.scheduleToEdit!;
-      _courseController = TextEditingController(text: s.title);
+      _courseController.text = s.title;
       _selectedDay = s.day;
       _selectedType = s.type;
-      _roomController = TextEditingController(text: s.room);
+      _roomController.text = s.room;
 
       if (s.locationDetail.startsWith('Titik Peta:')) {
         _isMapLocationSelected = true;
-        _mapsLinkController = TextEditingController(text: 'maps.app.goo.gl/kampusA');
+        _mapsLinkController.text = 'maps.app.goo.gl/kampusA';
       } else {
         _isMapLocationSelected = false;
-        _mapsLinkController = TextEditingController(text: s.locationDetail);
+        _mapsLinkController.text = s.locationDetail;
       }
 
       final parts = s.time.replaceAll('–', '-').split('-');
@@ -77,10 +77,6 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
           }
         }
       }
-    } else {
-      _courseController = TextEditingController();
-      _roomController = TextEditingController(text: 'Lab Komputer 2');
-      _mapsLinkController = TextEditingController(text: 'maps.app.goo.gl/kampusA');
     }
     _checkConflict();
   }
