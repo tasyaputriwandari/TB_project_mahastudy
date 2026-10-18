@@ -103,14 +103,22 @@ class TaskCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          task.title,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: isDone ? AppTheme.textMuted : AppTheme.textPrimary,
-                            decoration: isDone ? TextDecoration.lineThrough : null,
-                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                task.title,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDone ? AppTheme.textMuted : AppTheme.textPrimary,
+                                  decoration: isDone ? TextDecoration.lineThrough : null,
+                                ),
+                              ),
+                            ),
+                            _buildPriorityBadge(task.priority),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Row(
@@ -165,6 +173,47 @@ class TaskCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPriorityBadge(TaskPriority priority) {
+    Color bgColor;
+    Color textColor;
+    String label;
+
+    switch (priority) {
+      case TaskPriority.tinggi:
+        bgColor = const Color(0xFFFEE2E2);
+        textColor = const Color(0xFFDC2626);
+        label = 'Tinggi';
+        break;
+      case TaskPriority.sedang:
+        bgColor = const Color(0xFFFEF3C7);
+        textColor = const Color(0xFFD97706);
+        label = 'Sedang';
+        break;
+      case TaskPriority.rendah:
+        bgColor = const Color(0xFFDCFCE7);
+        textColor = const Color(0xFF16A34A);
+        label = 'Rendah';
+        break;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(left: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: textColor,
         ),
       ),
     );

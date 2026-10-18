@@ -20,7 +20,14 @@ class _TugasScreenState extends State<TugasScreen> {
   final MockData _mockData = MockData();
   String _activeFilter = 'Semua';
 
-  final List<String> _filters = ['Semua', 'Prioritas Tinggi', 'Mendekati', 'Selesai'];
+  final List<String> _filters = [
+    'Semua',
+    'Prioritas Tinggi',
+    'Prioritas Sedang',
+    'Prioritas Rendah',
+    'Mendekati',
+    'Selesai',
+  ];
 
   @override
   void initState() {
@@ -44,6 +51,8 @@ class _TugasScreenState extends State<TugasScreen> {
     final filteredTasks = _mockData.tasks.where((t) {
       if (_activeFilter == 'Semua') return true;
       if (_activeFilter == 'Prioritas Tinggi') return t.priority == TaskPriority.tinggi;
+      if (_activeFilter == 'Prioritas Sedang') return t.priority == TaskPriority.sedang;
+      if (_activeFilter == 'Prioritas Rendah') return t.priority == TaskPriority.rendah;
       if (_activeFilter == 'Mendekati') return t.isRiskAlert || t.deadlineText.contains('Hari ini');
       if (_activeFilter == 'Selesai') return t.status == TaskStatus.selesai;
       return true;
