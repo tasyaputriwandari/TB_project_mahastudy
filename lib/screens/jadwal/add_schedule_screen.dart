@@ -688,74 +688,94 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         'Wajib diisi. Pilih titik di peta atau tempel link.',
                         style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      Center(
-                        child: Text(
-                          _conflictMessage != null
-                              ? 'Perbaiki isian sebelum menyimpan.'
-                              : _canSave
-                                  ? (widget.isEditing ? 'Perubahan siap disimpan' : 'Lokasi valid • Siap disimpan')
-                                  : 'Lengkapi isian untuk mengaktifkan Simpan.',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: _conflictMessage != null ? AppTheme.danger : AppTheme.textSecondary,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Save action button (Figma spec: height 48px, radius 100px, #2563EB)
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: FilledButton(
-                          onPressed: _canSave ? _onSavePressed : null,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: _canSave ? AppTheme.primary : const Color(0xFFCBD5E1),
-                            disabledBackgroundColor: const Color(0xFFE2E8F0),
-                            shape: const StadiumBorder(),
-                          ),
-                          child: Text(
-                            widget.isEditing ? 'Simpan Perubahan' : 'Simpan Jadwal',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              color: _canSave ? Colors.white : const Color(0xFF94A3B8),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Delete action button (Figma spec: height 38px, text #DC2626)
-                      if (widget.isEditing) ...[
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 38,
-                          child: TextButton(
-                            onPressed: _showDeleteConfirmationDialog,
-                            style: TextButton.styleFrom(
-                              foregroundColor: const Color(0xFFDC2626),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: const Text(
-                              'Hapus Jadwal',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                color: Color(0xFFDC2626),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
+              ),
+            ),
+
+            // Fixed bottom action area
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(color: AppTheme.cardBorder.withValues(alpha: 0.6)),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Center(
+                    child: Text(
+                      _conflictMessage != null
+                          ? 'Perbaiki isian sebelum menyimpan.'
+                          : _canSave
+                              ? (widget.isEditing ? 'Perubahan siap disimpan' : 'Lokasi valid • Siap disimpan')
+                              : 'Lengkapi isian untuk mengaktifkan Simpan.',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: _conflictMessage != null ? AppTheme.danger : AppTheme.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Save action button (Figma spec: height 48px, radius 100px, #2563EB)
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: FilledButton(
+                      onPressed: _canSave ? _onSavePressed : null,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _canSave ? AppTheme.primary : const Color(0xFFCBD5E1),
+                        disabledBackgroundColor: const Color(0xFFE2E8F0),
+                        shape: const StadiumBorder(),
+                      ),
+                      child: Text(
+                        widget.isEditing ? 'Simpan Perubahan' : 'Simpan Jadwal',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: _canSave ? Colors.white : const Color(0xFF94A3B8),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Delete action button (Figma spec: height 38px, text #DC2626)
+                  if (widget.isEditing) ...[
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 38,
+                      child: TextButton(
+                        onPressed: _showDeleteConfirmationDialog,
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFFDC2626),
+                          padding: EdgeInsets.zero,
+                        ),
+                        child: const Text(
+                          'Hapus Jadwal',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            color: Color(0xFFDC2626),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ],
