@@ -121,36 +121,36 @@ class TaskCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(
-                              task.deadlineText,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isRisk ? AppTheme.danger : AppTheme.textSecondary,
-                                fontWeight: isRisk ? FontWeight.w600 : FontWeight.normal,
-                              ),
-                            ),
-                            if (isRisk) ...[
-                              const SizedBox(width: 4),
-                              const Text(
-                                '• Sisa 8 jam & belum ada rencana belajar!',
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: task.deadlineText,
                                 style: TextStyle(
-                                  fontSize: 11,
-                                  color: AppTheme.danger,
-                                ),
-                              ),
-                            ] else ...[
-                              const SizedBox(width: 6),
-                              Text(
-                                '• ${task.statusLabel}',
-                                style: const TextStyle(
                                   fontSize: 12,
-                                  color: AppTheme.textSecondary,
+                                  color: isRisk ? AppTheme.danger : AppTheme.textSecondary,
+                                  fontWeight: isRisk ? FontWeight.w600 : FontWeight.normal,
                                 ),
                               ),
+                              if (isRisk) ...[
+                                const TextSpan(
+                                  text: ' • Sisa 8 jam & belum ada rencana belajar!',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppTheme.danger,
+                                  ),
+                                ),
+                              ] else ...[
+                                TextSpan(
+                                  text: ' • ${task.statusLabel}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                         if (isRisk && onScheduleStudy != null) ...[
                           const SizedBox(height: 8),
