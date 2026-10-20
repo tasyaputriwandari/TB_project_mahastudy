@@ -372,6 +372,19 @@ class MockData extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateStudyPlan(StudyPlanItem updated) {
+    final index = studyPlans.indexWhere((p) => p.id == updated.id);
+    if (index != -1) {
+      studyPlans[index] = updated;
+      notifyListeners();
+    }
+  }
+
+  void deleteStudyPlan(String id) {
+    studyPlans.removeWhere((p) => p.id == id);
+    notifyListeners();
+  }
+
   void toggleEmptyState() {
     showEmptyState = !showEmptyState;
     notifyListeners();
