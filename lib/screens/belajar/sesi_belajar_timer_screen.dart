@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
+import 'ringkasan_sesi_dialog.dart';
 
 class SesiBelajarTimerScreen extends StatefulWidget {
   final String courseName;
@@ -56,24 +57,25 @@ class _SesiBelajarTimerScreenState extends State<SesiBelajarTimerScreen> {
     }
   }
 
-  void _showCompletedDialog() {
-    showDialog(
+  Future<void> _showCompletedDialog() async {
+    _timer?.cancel();
+    final elapsedSec = _totalSeconds - _remainingSeconds;
+    final elapsedMin = (elapsedSec / 60).ceil().clamp(1, widget.initialMinutes);
+
+    final res = await showDialog<int>(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: const Text('🎉 Sesi Belajar Selesai!'),
-        content: Text('Hebat! Kamu telah fokus belajar ${widget.courseName} selama ${widget.initialMinutes} menit.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              Navigator.pop(context);
-            },
-            child: const Text('Selesai'),
-          ),
-        ],
+      builder: (ctx) => RingkasanSesiDialog(
+        courseName: widget.courseName,
+        topic: widget.topic,
+        initialMinutes: widget.initialMinutes,
+        completedMinutes: elapsedMin,
       ),
     );
+
+    if (mounted) {
+      Navigator.pop(context, res ?? elapsedMin);
+    }
   }
 
   @override

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../../models/study_plan_model.dart';
 
 class AddStudyPlanScreen extends StatefulWidget {
-  const AddStudyPlanScreen({super.key});
+  final dynamic initialPlan;
+  const AddStudyPlanScreen({super.key, this.initialPlan});
 
   @override
   State<AddStudyPlanScreen> createState() => _AddStudyPlanScreenState();
@@ -29,6 +30,16 @@ class _AddStudyPlanScreenState extends State<AddStudyPlanScreen> {
   DateTime _tomorrow() {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day + 1);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialPlan != null) {
+      final p = widget.initialPlan;
+      _courseController.text = p.courseName ?? '';
+      _targetController.text = p.topic ?? '';
+    }
   }
 
   @override
@@ -209,9 +220,11 @@ class _AddStudyPlanScreenState extends State<AddStudyPlanScreen> {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'Tambah Rencana Belajar',
-                        style: TextStyle(
+                      child: Text(
+                        widget.initialPlan != null
+                            ? 'Edit Rencana Belajar'
+                            : 'Tambah Rencana Belajar',
+                        style: const TextStyle(
                           color: _navy,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -318,9 +331,11 @@ class _AddStudyPlanScreenState extends State<AddStudyPlanScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Simpan Rencana',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      child: Text(
+                        widget.initialPlan != null
+                            ? 'Simpan Perubahan'
+                            : 'Simpan Rencana',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
