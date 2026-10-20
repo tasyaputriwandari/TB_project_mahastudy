@@ -294,7 +294,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF2867E8).withOpacity(0.3),
+                    color: const Color(0xFF2867E8).withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -451,7 +451,7 @@ class _TaskScreenState extends State<TaskScreen> {
                     backgroundColor: const Color(0xFF2867E8),
                     foregroundColor: Colors.white,
                     elevation: 2,
-                    shadowColor: const Color(0xFF2867E8).withOpacity(0.3),
+                    shadowColor: const Color(0xFF2867E8).withValues(alpha: 0.3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -558,7 +558,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white.withOpacity(0.25)
+                      ? Colors.white.withValues(alpha: 0.25)
                       : const Color(0xFFE2E8F0),
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -595,7 +595,7 @@ class _TaskScreenState extends State<TaskScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -751,7 +751,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                   ),
                 ],
