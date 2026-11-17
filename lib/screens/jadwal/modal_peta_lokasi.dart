@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 
@@ -402,6 +403,32 @@ class _ModalPetaLokasiState extends State<ModalPetaLokasi> {
     }
   }
 
+  Future<void> _openGoogleMaps() async {
+    final query = Uri.encodeComponent('Fakultas Teknologi Informasi Universitas Andalas ${widget.roomName}');
+    final googleMapsAppUrl = Uri.parse('geo:-0.91444,100.45889?q=$query');
+    final webUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
+
+    try {
+      if (await canLaunchUrl(googleMapsAppUrl)) {
+        await launchUrl(googleMapsAppUrl, mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(webUrl, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {
+      try {
+        await launchUrl(webUrl, mode: LaunchMode.platformDefault);
+      } catch (err) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Tidak dapat membuka peta: $err'),
+            backgroundColor: AppTheme.danger,
+          ),
+        );
+      }
+    }
+  }
+
   Widget _buildBottomButton() {
     if (_currentState == MapLocationState.belumAda) {
       return OutlinedButton.icon(
@@ -419,15 +446,17 @@ class _ModalPetaLokasiState extends State<ModalPetaLokasi> {
       text: _currentState == MapLocationState.offline ? 'Buka Denah Offline' : 'Buka di Google Maps',
       icon: Icons.map_outlined,
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_currentState == MapLocationState.offline
-                ? 'Denah ruangan offline ${widget.roomName} aktif.'
-                : 'Membuka rute ${widget.roomName} di peta GPS kampus...'),
-            backgroundColor: AppTheme.primary,
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        if (_currentState == MapLocationState.offline) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Denah ruangan offline ${widget.roomName} aktif.'),
+              backgroundColor: AppTheme.primary,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        } else {
+          _openGoogleMaps();
+        }
       },
     );
   }

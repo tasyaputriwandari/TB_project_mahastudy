@@ -5,6 +5,7 @@ import '../models/schedule_item.dart';
 import '../models/task_item.dart';
 import '../models/study_plan_item.dart';
 import '../models/user_model.dart';
+import 'database_helper.dart';
 
 class MockUserAccount {
   final UserModel user;
@@ -20,6 +21,39 @@ class MockData extends ChangeNotifier {
   static final MockData _instance = MockData._internal();
   factory MockData() => _instance;
   MockData._internal();
+
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  bool _isDbInitialized = false;
+
+  Future<void> initDatabase() async {
+    if (_isDbInitialized) return;
+    try {
+      final dbCourses = await _dbHelper.getCourses();
+      if (dbCourses.isNotEmpty) {
+        courses.clear();
+        courses.addAll(dbCourses);
+      } else {
+        for (final c in courses) {
+          await _dbHelper.insertCourse(c);
+        }
+      }
+
+      final dbSchedules = await _dbHelper.getSchedules();
+      if (dbSchedules.isNotEmpty) {
+        schedules.clear();
+        schedules.addAll(dbSchedules);
+      } else {
+        for (final s in schedules) {
+          await _dbHelper.insertSchedule(s);
+        }
+      }
+
+      _isDbInitialized = true;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Database initialization fallback to in-memory: $e');
+    }
+  }
 
   final List<MockUserAccount> _registeredUsers = [
     const MockUserAccount(
@@ -298,6 +332,10 @@ class MockData extends ChangeNotifier {
   // Helper methods for Course Management
   void addCourse(Course course) {
     courses.add(course);
+    _dbHelper.insertCourse(course).catchError((e) {
+      debugPrint('Error inserting course into SQLite: $e');
+      return 0;
+    });
     notifyListeners();
   }
 
@@ -305,18 +343,30 @@ class MockData extends ChangeNotifier {
     final index = courses.indexWhere((c) => c.id == updated.id);
     if (index != -1) {
       courses[index] = updated;
+      _dbHelper.updateCourse(updated).catchError((e) {
+        debugPrint('Error updating course in SQLite: $e');
+        return 0;
+      });
       notifyListeners();
     }
   }
 
   void deleteCourse(String id) {
     courses.removeWhere((c) => c.id == id);
+    _dbHelper.deleteCourse(id).catchError((e) {
+      debugPrint('Error deleting course from SQLite: $e');
+      return 0;
+    });
     notifyListeners();
   }
 
   // Helper methods for Schedule Management
   void addSchedule(ScheduleItem item) {
     schedules.add(item);
+    _dbHelper.insertSchedule(item).catchError((e) {
+      debugPrint('Error inserting schedule into SQLite: $e');
+      return 0;
+    });
     notifyListeners();
   }
 
@@ -324,12 +374,20 @@ class MockData extends ChangeNotifier {
     final index = schedules.indexWhere((s) => s.id == updated.id);
     if (index != -1) {
       schedules[index] = updated;
+      _dbHelper.updateSchedule(updated).catchError((e) {
+        debugPrint('Error updating schedule in SQLite: $e');
+        return 0;
+      });
       notifyListeners();
     }
   }
 
   void deleteSchedule(String id) {
     schedules.removeWhere((s) => s.id == id);
+    _dbHelper.deleteSchedule(id).catchError((e) {
+      debugPrint('Error deleting schedule from SQLite: $e');
+      return 0;
+    });
     notifyListeners();
   }
 

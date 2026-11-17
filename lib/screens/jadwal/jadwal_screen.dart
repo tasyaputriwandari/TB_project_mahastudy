@@ -527,9 +527,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
     if (!mounted || result == null) return;
 
     if (result is Map && result['deleted'] == true) {
-      setState(() {
-        _mockData.schedules.removeWhere((s) => s.id == item.id);
-      });
+      _mockData.deleteSchedule(item.id);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('🗑️ Jadwal ${item.title} berhasil dihapus'),
@@ -537,12 +535,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
         ),
       );
     } else if (result is ScheduleItem) {
-      setState(() {
-        final index = _mockData.schedules.indexWhere((s) => s.id == result.id);
-        if (index != -1) {
-          _mockData.schedules[index] = result;
-        }
-      });
+      _mockData.updateSchedule(result);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ Jadwal ${result.title} berhasil diperbarui!'),
@@ -579,9 +572,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
     if (!mounted || result == null) return;
 
     if (result is Map && result['deleted'] == true) {
-      setState(() {
-        _mockData.schedules.removeWhere((s) => s.id == item.id);
-      });
+      _mockData.deleteSchedule(item.id);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('🗑️ Jadwal ${item.title} berhasil dihapus'),
@@ -589,11 +580,8 @@ class _JadwalScreenState extends State<JadwalScreen> {
         ),
       );
     } else if (result is ScheduleItem) {
+      _mockData.updateSchedule(result);
       setState(() {
-        final index = _mockData.schedules.indexWhere((s) => s.id == result.id);
-        if (index != -1) {
-          _mockData.schedules[index] = result;
-        }
         _selectedDay = result.day;
         _selectedType = result.type;
       });
@@ -628,8 +616,8 @@ class _JadwalScreenState extends State<JadwalScreen> {
     }
 
     if (result != null && result is ScheduleItem && mounted) {
+      _mockData.addSchedule(result);
       setState(() {
-        _mockData.schedules.add(result);
         _selectedDay = result.day;
         _selectedType = result.type;
       });

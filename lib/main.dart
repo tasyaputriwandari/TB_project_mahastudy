@@ -4,8 +4,9 @@ import 'package:flutter/foundation.dart';
 
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
+import 'data/mock_data.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -13,6 +14,7 @@ void main() {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
+  await MockData().initDatabase();
   runApp(const MahastudyApp());
 }
 

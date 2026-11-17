@@ -193,6 +193,12 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
             isNew: true,
           );
 
+    if (isEdit) {
+      MockData().updateSchedule(savedSchedule);
+    } else {
+      MockData().addSchedule(savedSchedule);
+    }
+
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -295,8 +301,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
             ),
             FilledButton(
               onPressed: () {
+                if (widget.scheduleToEdit != null) {
+                  MockData().deleteSchedule(widget.scheduleToEdit!.id);
+                }
                 Navigator.pop(dialogContext); // Close dialog
-                Navigator.pop(context, {'deleted': true, 'id': widget.scheduleToEdit!.id}); // Return delete flag
+                Navigator.pop(context, {'deleted': true, 'id': widget.scheduleToEdit?.id}); // Return delete flag
               },
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFFDC2626),
